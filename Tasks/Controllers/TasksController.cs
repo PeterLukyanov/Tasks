@@ -1,3 +1,31 @@
 using Models;
 using Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Services;
 
+namespace Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class TasksController : ControllerBase
+{
+    private readonly TasksService _tasksService;
+
+    public TasksController(TasksService tasksService)
+    {
+        _tasksService = tasksService;
+    }
+
+    public async Task<ActionResult<List<Task_>>> GetAllTasks()
+    {
+        var result = await _tasksService.GetAllTasks();
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+        else
+        {
+            return NotFound(result.Error);
+        }
+    }
+}
