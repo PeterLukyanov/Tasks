@@ -57,4 +57,18 @@ public class TasksController : ControllerBase
             return NotFound(result.Error);
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateStatus([FromBody] TaskDtoForChangeStatus dto, int id)
+    {
+        var result = await _tasksService.UpdateStatus(dto, id);
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+        else
+        {
+            return BadRequest(result.Error);
+        }
+    }
 }

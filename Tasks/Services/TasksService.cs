@@ -56,4 +56,28 @@ public class TasksService
             return Result.Success(isExistTask);
         }
     }
+
+    public async Task<Result<Task_>> UpdateStatus(TaskDtoForChangeStatus dto, int id)
+    {
+        var isExistTask = await _unit.taskRepository.GetAll().FirstOrDefaultAsync(task => task.Id == id);
+        if (isExistTask == null)
+        {
+            return Result.Failure<Task_>($"Task with this {id} id not exist");
+        }
+        else
+        {
+            if ((isExistTask.Status == "Backlog" && dto.Status == "InWork")
+                || (isExistTask.Status == "InWork" && dto.Status == "Testing")
+                || (isExistTask.Status == "Testing" && dto.Status == "Done"))
+            {
+                isExistTask.ChangeStatus(dto.Status);
+                await _unit.SaveChangesAsync();
+                return Result.Success(isExistTask);
+            }
+            else
+            {
+                return Result.Failure<Task_>("Status, that you chose is not valid, you need to choose status, that more then previous on one step and you need to follow rules of escalation of status: Backlog-->InWork-->Testing-->Done");
+            }
+        }
+    }
 }
