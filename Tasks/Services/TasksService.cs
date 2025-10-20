@@ -59,6 +59,7 @@ public class TasksService
 
     public async Task<Result<Task_>> UpdateStatus(TaskDtoForChangeStatus dto, int id)
     {
+
         var isExistTask = await _unit.taskRepository.GetAll().FirstOrDefaultAsync(task => task.Id == id);
         if (isExistTask == null)
         {
@@ -66,18 +67,26 @@ public class TasksService
         }
         else
         {
-            if ((isExistTask.Status == "Backlog" && dto.Status == "InWork")
-                || (isExistTask.Status == "InWork" && dto.Status == "Testing")
-                || (isExistTask.Status == "Testing" && dto.Status == "Done"))
+            var statusesList = await _unit.statusRepository.GetAll().ToListAsync();
+            if (statusesList != null)
             {
-                isExistTask.ChangeStatus(dto.Status);
-                await _unit.SaveChangesAsync();
-                return Result.Success(isExistTask);
+                int currentTaskStep = statusesList.Find(status => status.Name == isExistTask.Status)!.Step;
+
+                if (isExistTask.Status == statusesList.First(status => status.Step == statusesList.Max(status=>status.Step)).Name)
+                {
+                    return Result.Failure<Task_>($"Status {isExistTask.Status} is the last one status");
+                }
+                else if (currentTaskStep+1 == statusesList.First(status=>status.Name==dto.Status).Step)
+                {
+                    isExistTask.ChangeStatus(dto.Status);
+                    await _unit.SaveChangesAsync();
+                    return Result.Success(isExistTask);
+                }
+
             }
-            else
-            {
-                return Result.Failure<Task_>("Status, that you chose is not valid, you need to choose status, that more then previous on one step and you need to follow rules of escalation of status: Backlog-->InWork-->Testing-->Done");
-            }
+
+            return Result.Failure<Task_>("Status, that you chose is not valid, you need to choose status, that more then previous on one step and you need to follow rules of escalation of status: Backlog-->InWork-->Testing-->Done");
+
         }
     }
 }

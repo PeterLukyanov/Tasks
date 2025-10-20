@@ -5,5 +5,6 @@ namespace UoW;
 public interface IUnitOfWork
 {
     Task SaveChangesAsync();
-    ITaskRepository taskRepository{ get; }
+    ITaskRepository taskRepository { get; }
+    IStatusRepository statusRepository{ get; }
 }
