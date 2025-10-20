@@ -16,6 +16,7 @@ public class TasksController : ControllerBase
         _tasksService = tasksService;
     }
 
+    [HttpGet("AllTasks")]
     public async Task<ActionResult<List<Task_>>> GetAllTasks()
     {
         var result = await _tasksService.GetAllTasks();
