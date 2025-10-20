@@ -43,4 +43,18 @@ public class TasksController : ControllerBase
             return BadRequest(result.Error);
         }
     }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Task_>> GetTaskById(int id)
+    {
+        var result = await _tasksService.GetTaskWithId(id);
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+        else
+        {
+            return NotFound(result.Error);
+        }
+    }
 }

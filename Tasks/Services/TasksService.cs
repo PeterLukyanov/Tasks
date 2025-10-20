@@ -43,4 +43,17 @@ public class TasksService
             return Result.Failure<Task_>("Task with same title exist");
         }
     }
+
+    public async Task<Result<Task_>> GetTaskWithId(int id)
+    {
+        var isExistTask = await _unit.taskRepository.GetAll().FirstOrDefaultAsync(task => task.Id == id);
+        if (isExistTask == null)
+        {
+            return Result.Failure<Task_>($"Task with this {id} id not exist");
+        }
+        else
+        {
+            return Result.Success(isExistTask);
+        }
+    }
 }
