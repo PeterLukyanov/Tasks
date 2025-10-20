@@ -6,11 +6,10 @@ public class Task_
     public string Title { get; private set; } = null!;
     public string Description { get; private set; } = null!;
     public string Status { get; private set; } = "Backlog";
-    public Task_(string title, string description, string status)
+    public Task_(string title, string description)
     {
         Title = title;
         Description = description;
-        Status = status;
     }
 
     public void ChangeStatus(string newStatus)

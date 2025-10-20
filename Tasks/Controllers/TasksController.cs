@@ -29,4 +29,18 @@ public class TasksController : ControllerBase
             return NotFound(result.Error);
         }
     }
+
+    [HttpPost]
+    public async Task<IActionResult> AddTask([FromBody] TaskDtoForCreate dto)
+    {
+        var result = await _tasksService.AddNewTask(dto);
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+        else
+        {
+            return BadRequest(result.Error);
+        }
+    }
 }

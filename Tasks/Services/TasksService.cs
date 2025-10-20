@@ -28,5 +28,19 @@ public class TasksService
         }
     }
 
-    
+    public async Task<Result<Task_>> AddNewTask(TaskDtoForCreate dto)
+    {
+        var isExistSameTask = await _unit.taskRepository.GetAll().FirstOrDefaultAsync(task => task.Title.Trim().ToLower() == dto.Title.Trim().ToLower());
+        if (isExistSameTask == null)
+        {
+            var task = new Task_(dto.Title, dto.Description);
+            await _unit.taskRepository.AddAsync(task);
+            await _unit.SaveChangesAsync();
+            return Result.Success(task);
+        }
+        else
+        {
+            return Result.Failure<Task_>("Task with same title exist");
+        }
+    }
 }
