@@ -1,8 +1,9 @@
-
+using Db;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<TasksDb>(options =>
     options.UseInMemoryDatabase("TasksDb"));
 
 builder.Services.AddSwaggerGen();
